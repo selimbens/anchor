@@ -1,0 +1,157 @@
+# .goreleaser.yml
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+    - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    binary: anchor
+    ldflags:
+      - -s -w
+      - -X github.com/selimbens/anchor/cmd/version.Version={{.Version}}
+      - -X github.com/selimbens/anchor/cmd/version.GitCommit={{.Commit}}
+      - -X github.com/selimbens/anchor/cmd/version.BuildDate={{.Date}}
+    ignore:
+      - goos: windows
+        goarch: arm64  # Skip Windows ARM64 builds for now
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    files:
+      - README.md
+      - LICENSE
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+
+# Homebrew configuration
+brews:
+  - name: anchor
+    homepage: https://github.com/selimbens/anchor
+    repository:
+      owner: selimbens
+      name: homebrew-anchor
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    folder: Formula
+    description: "AI-powered CLI tool for local LLM knowledge retrieval via Ollama"
+    license: MIT
+    test: |
+      system "#{bin}/anchor", "--version"
+    caveats: |
+      Anchor requires Ollama to be installed and running locally.
+
+      🚀 Quick Start:
+      1. Install Ollama: brew install ollama
+      2. Start Ollama: brew services start ollama
+      3. Pull embedding model: ollama pull nomic-embed-text
+      4. Test Anchor: anchor ingest /path/to/your/notes
+
+      For more information: https://github.com/selimbens/anchor
+    commit_msg_template: |
+      {{.ProjectName}} {{.Version}}
+
+      Built with GoReleaser {{.Version}}
+      Automated update by GoReleaser
+
+# GitHub release configuration
+release:
+  github:
+    owner: selimbens
+    name: anchor
+  draft: false
+  prerelease: auto
+  name_template: "{{.ProjectName}} v{{.Version}}"
+  header: |
+    ## Anchor {{.Version}}
+    
+    ### 🚀 Features
+    ### 🐛 Bug Fixes  
+    ### 🔧 Improvements
+    ### 📚 Documentation
+  footer: |
+    ### 🔗 Links
+    - [Installation Guide](https://github.com/selimbens/anchor#installation-uninstallation)
+    - [Documentation](https://github.com/selimbens/anchor)
+    - [Changelog](https://github.com/selimbens/anchor/releases)
+    
+    ---
+    
+    **Thank you for using Anchor! ⚓**
+
+# Docker images (optional for future)
+dockers:
+  - image_templates:
+      - "ghcr.io/selimbens/anchor:{{ .Tag }}"
+      - "ghcr.io/selimbens/anchor:v{{ .Major }}"
+      - "ghcr.io/selimbens/anchor:latest"
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/amd64"
+
+# GPG signing (optional)
+signs:
+  - cmd: gpg
+    args:
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+    signature: "${artifact}.sig"
+    artifacts: none
+
+# npm packages (optional for future)
+nfpms:
+  - formats:
+      - apk
+      - deb
+      - rpm
+    vendor: selimbens
+    homepage: https://github.com/selimbens/anchor
+    description: "AI-powered CLI tool for local LLM knowledge retrieval"
+    license: MIT
+    maintainer: Selim Ben <selim@example.com>
+    section: utils
+
+# Scoop configuration (optional)
+scoops:
+  - repository:
+      owner: selimbens
+      name: scoop-bucket
+    homepage: https://github.com/selimbens/anchor
+    description: "AI-powered CLI tool for local LLM knowledge retrieval"
+    license: MIT

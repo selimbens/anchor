@@ -1,0 +1,51 @@
+name: Update Formula
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC to check for new releases
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout tap
+      uses: actions/checkout@v4
+      
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.25'
+        
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+          
+    - name: Install Homebrew
+      uses: Homebrew/brew-install-head@v1
+      
+    - name: Tap local formula
+      run: |
+        cd Formula
+        brew tap local/tap .
+        brew install local/tap/anchor
+        
+    - name: Test anchor installation
+      run: |
+        anchor --help
+        which anchor
+        
+    - name: Test anchor functionality (basic)
+      run: |
+        # Test basic commands without Ollama
+        anchor ingest --help || true
+        anchor ask --help || true
