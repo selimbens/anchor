@@ -18,7 +18,7 @@ anchor ingest /path/to/your/notes
 ### 2. Ask Questions
 Query your knowledge base to find relevant principles or past decisions.
 ```bash
-anchor ask "What is my philosophy on presence?"
+anchor ask "What is the symbolic link between the whale's deep silence and my philosophy on 'staying underwater' (and my visceral hatred of unread emails)?"
 ```
 
 ## Installation & Uninstallation

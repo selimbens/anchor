@@ -97,7 +97,7 @@ FLAGS:
 
 EXAMPLES:
     anchor ingest ~/Documents/notes
-    anchor ask "What is my philosophy on productivity?"
+    anchor ask "What is the symbolic link between the whale's deep silence and my philosophy on 'staying underwater' (and my visceral hatred of unread emails)?"
 
 PREREQUISITES:
     - Ollama must be installed and running locally
