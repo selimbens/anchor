@@ -1,32 +1,24 @@
 # Anchor Developer Notes ⚓
 
-This file contains the internal process for packaging and releasing the `anchor` tool.
+This file contains the internal process for developing and managing the `anchor` tool.
 
-## Release Process (Moving to a Standalone Repo)
+## Development Workflow
 
-### 1. Repository Setup
-1. Create `github.com/selimbens/anchor`.
-2. Push this directory's contents as the root of the new repo.
-3. Ensure `go.mod` is set to `module github.com/selimbens/anchor`.
-
-### 2. Versioning & Tags
-To create a new release for Homebrew/Go:
+### 1. Build & Test
+Use the provided `Makefile` for standard tasks:
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+make build   # Build binary
+make test    # Run tests
+make fmt     # Format code
 ```
 
-### 3. Homebrew Tap Maintenance
-If using a Homebrew Tap (`selimbens/homebrew-tap`):
+### 2. Versioning
+This project uses Git tags for versioning. The version is injected at build time using ldflags.
 
-1. **Calculate the SHA256** of the release source:
-   ```bash
-   curl -L https://github.com/selimbens/anchor/archive/refs/tags/v1.0.0.tar.gz | shasum -a 256
-   ```
-2. **Update the Formula**:
-   Update `Formula/anchor.rb` with the new version and the resulting `sha256` hash.
-3. **Push to Tap**:
-   Commit and push the updated formula to your `homebrew-tap` repository.
+To mark a new state:
+```bash
+git tag v0.1.0-alpha
+```
 
 ## Future Improvements
 - [ ] Add support for `boltDB` or `sqlite-vss` for faster queries on large repos.
