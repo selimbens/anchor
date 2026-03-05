@@ -26,11 +26,11 @@ class Anchor < Formula
       "-s",
       "-w",
       "-X",
-      "github.com/selimbens/anchor/internal/version.Version=#{version}",
+      "github.com/selimbens/anchor/cmd/version.Version=#{version}",
       "-X",
-      "github.com/selimbens/anchor/internal/version.GitCommit=#{tap.user}",
+      "github.com/selimbens/anchor/cmd/version.GitCommit=#{tap.user}",
       "-X",
-      "github.com/selimbens/anchor/internal/version.BuildDate=#{Time.now.iso8601}"
+      "github.com/selimbens/anchor/cmd/version.BuildDate=#{Time.now.iso8601}"
     ]
 
     system "go", "build", "-ldflags", ldflags.join(" "), "-o", bin/"anchor"

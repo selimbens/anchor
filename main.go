@@ -118,8 +118,8 @@ func ingest(root string) error {
 		if err != nil {
 			return err
 		}
-		// Skip hidden directories and node_modules
-		if info.IsDir() && (strings.HasPrefix(info.Name(), ".") || info.Name() == "node_modules") {
+		// Skip hidden directories and node_modules, but don't skip the root itself
+		if info.IsDir() && path != root && (strings.HasPrefix(info.Name(), ".") || info.Name() == "node_modules") {
 			return filepath.SkipDir
 		}
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".md") {

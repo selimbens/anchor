@@ -23,12 +23,17 @@ anchor ask "What is my philosophy on presence?"
 
 ## Installation & Uninstallation
 
-### 1. The "Go Native" Way (Recommended for Developers)
+### 1. The "Go Native Way" (Recommended for Developers)
 If your `$GOPATH/bin` is in your `$PATH`:
 
-**Install:**
+**Install from GitHub:**
 ```bash
 go install github.com/selimbens/anchor@latest
+```
+
+**Install from Local Source (with version info):**
+```bash
+go install -ldflags "-X github.com/selimbens/anchor/cmd/version.Version=$(git describe --tags --always) -s -w" .
 ```
 
 **Uninstall:**
@@ -62,6 +67,20 @@ brew install selimbens/tap/anchor
 **Uninstall:**
 ```bash
 brew uninstall anchor
+```
+
+## AI Agent Integration
+
+To enable an AI agent (like Gemini CLI or Cursor) to use Anchor for local knowledge retrieval, add the following to its system prompt or project context (e.g., `.gemini/GEMINI.md`):
+
+```markdown
+### ⚓ Anchor Integration
+You have access to the `anchor` CLI tool for local knowledge retrieval.
+- **Goal**: Before providing advice on principles, past decisions, or career strategy, check the local knowledge base.
+- **Usage**: 
+  - Run `anchor ask "<question>"` to retrieve relevant context.
+  - If the knowledge base is missing, suggest running `anchor ingest <dir>`.
+- **Constraint**: Ollama must be running locally with the `nomic-embed-text` model for this to work.
 ```
 
 ## Setup Requirements
