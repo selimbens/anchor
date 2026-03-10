@@ -16,9 +16,10 @@ import (
 )
 
 type Anchor struct {
-	Path      string    `json:"path"`
-	Content   string    `json:"content"`
-	Embedding []float64 `json:"embedding"`
+	Path         string    `json:"path"`
+	Content      string    `json:"content"`
+	Embedding    []float64 `json:"embedding"`
+	LastModified int64     `json:"last_modified"`
 }
 
 type VectorStore struct {
@@ -112,9 +113,22 @@ For more information, visit: https://github.com/selimbens/anchor
 }
 
 func ingest(root string) error {
-	var store VectorStore
+	var currentStore VectorStore
+	// Try to load existing store
+	existingData, err := os.ReadFile(storePath)
+	if err == nil {
+		json.Unmarshal(existingData, &currentStore)
+	}
 
-	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	// Create a map for quick lookup: path -> []Anchor
+	existingAnchors := make(map[string][]Anchor)
+	for _, a := range currentStore.Anchors {
+		existingAnchors[a.Path] = append(existingAnchors[a.Path], a)
+	}
+
+	var newStore VectorStore
+
+	err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -123,6 +137,16 @@ func ingest(root string) error {
 			return filepath.SkipDir
 		}
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".md") {
+			modTime := info.ModTime().Unix()
+
+			// Check if we already have this file and it hasn't changed
+			if anchors, ok := existingAnchors[path]; ok && len(anchors) > 0 {
+				if anchors[0].LastModified == modTime {
+					newStore.Anchors = append(newStore.Anchors, anchors...)
+					return nil
+				}
+			}
+
 			fmt.Printf("⚓ Anchoring %s...\n", path)
 			content, err := os.ReadFile(path)
 			if err != nil {
@@ -142,10 +166,11 @@ func ingest(root string) error {
 					return fmt.Errorf("failed to get embedding for %s: %w", path, err)
 				}
 
-				store.Anchors = append(store.Anchors, Anchor{
-					Path:      path,
-					Content:   text,
-					Embedding: emb,
+				newStore.Anchors = append(newStore.Anchors, Anchor{
+					Path:         path,
+					Content:      text,
+					Embedding:    emb,
+					LastModified: modTime,
 				})
 			}
 		}
@@ -156,7 +181,7 @@ func ingest(root string) error {
 		return err
 	}
 
-	data, _ := json.MarshalIndent(store, "", "  ")
+	data, _ := json.MarshalIndent(newStore, "", "  ")
 	return os.WriteFile(storePath, data, 0644)
 }
 

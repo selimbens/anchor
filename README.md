@@ -82,6 +82,6 @@ You have access to the `anchor` CLI tool for local knowledge retrieval.
 - [x] **Enhanced .gitignore**: Comprehensive patterns for modern Go development
 - [x] **Development Infrastructure**: Makefile, testing, and basic CLI
 - [ ] **Homebrew Integration**: Official tap for easier macOS installation.
+- [x] **Performance Optimization**: Incremental ingestion to only re-embed changed files.
 - [ ] **Automated Ingest**: Add a git hook or cron job to re-ingest your notes daily.
-- [ ] **Performance Optimization**: Add incremental ingestion and caching for large repositories.
 - [ ] **Advanced Search**: Add semantic search capabilities and filtering.
