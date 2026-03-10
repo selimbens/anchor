@@ -62,6 +62,17 @@ make install
 make uninstall
 ```
 
+---
+
+### 4. The "Docker Way" (Containerized/Isolated)
+If you prefer to run Anchor in an isolated environment with its own Ollama instance:
+
+**Run with Docker Compose:**
+```bash
+docker-compose up -d
+```
+This starts both Anchor and a dedicated Ollama container. Place your notes in a `notes/` directory in the project root for automatic ingestion.
+
 ## AI Agent Integration
 
 To enable an AI agent (like Gemini CLI or Cursor) to use Anchor for local knowledge retrieval, add the following to its system prompt or project context (e.g., `.gemini/GEMINI.md`):

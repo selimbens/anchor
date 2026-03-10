@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  anchor:
+    build: .
+    volumes:
+      - ./notes:/home/anchor/notes
+      - anchor-store:/home/anchor/data
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    networks:
+      - anchor-net
+    command: ["ingest", "/home/anchor/notes"]
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - anchor-net
+
+volumes:
+  anchor-store:
+  ollama-data:
+
+networks:
+  anchor-net:
+    driver: bridge

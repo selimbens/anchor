@@ -234,7 +234,12 @@ func getEmbedding(text string) ([]float64, error) {
 	}
 	jsonData, _ := json.Marshal(reqBody)
 
-	resp, err := http.Post("http://localhost:11434/api/embeddings", "application/json", bytes.NewBuffer(jsonData))
+	ollamaHost := os.Getenv("OLLAMA_HOST")
+	if ollamaHost == "" {
+		ollamaHost = "http://localhost:11434"
+	}
+
+	resp, err := http.Post(ollamaHost+"/api/embeddings", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("Ollama connection failed (is it running?): %w", err)
 	}
