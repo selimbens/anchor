@@ -31,10 +31,13 @@ If your `$GOPATH/bin` is in your `$PATH`:
 go install github.com/selimbens/anchor@latest
 ```
 
-**Install from Local Source (with version info):**
+**Install from Local Source:**
 ```bash
 go install -ldflags "-X github.com/selimbens/anchor/cmd/version.Version=$(git describe --tags --always) -s -w" .
 ```
+
+**Update:**
+To update to the latest version, simply re-run the installation command from the repository root.
 
 **Uninstall:**
 ```bash
@@ -43,7 +46,12 @@ rm $(go env GOPATH)/bin/anchor
 
 ---
 
-### 2. The "Makefile" Way (Manual/Global Control)
+### 2. Pre-built Binaries (GitHub Releases)
+For most users, you can find the latest pre-compiled binaries for your platform (Linux, macOS, Windows) on the **[Releases](https://github.com/selimbens/anchor/releases)** page. Simply download the archive for your architecture, extract it, and move the `anchor` binary to your `/usr/local/bin/` or any directory in your `$PATH`.
+
+---
+
+### 3. The "Makefile" Way (Manual/Global Control)
 **Install:**
 ```bash
 make install
