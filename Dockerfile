@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk add --no-cache git
 
 # Copy go mod files
-COPY go.mod go.sum ./
+COPY go.mod ./
 
 # Download dependencies
 RUN go mod download
@@ -21,8 +21,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o anchor main.go
 # Final stage
 FROM alpine:latest
 
-# Install ca-certificates for HTTPS requests
-RUN apk --no-cache add ca-certificates
+# Install ca-certificates and curl for HTTPS requests and health checks
+RUN apk --no-cache add ca-certificates curl
 
 # Create a non-root user
 RUN addgroup -g 1001 -S anchor && \
@@ -33,8 +33,8 @@ WORKDIR /home/anchor
 # Copy the binary from builder stage
 COPY --from=builder /app/anchor .
 
-# Copy README and LICENSE
-COPY README.md LICENSE ./
+# Copy README
+COPY README.md ./
 
 # Change ownership to anchor user
 RUN chown -R anchor:anchor /home/anchor
