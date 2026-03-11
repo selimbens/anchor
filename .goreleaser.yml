@@ -62,7 +62,7 @@ brews:
       owner: selimbens
       name: homebrew-anchor
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    folder: Formula
+    directory: Formula
     description: "AI-powered CLI tool for local LLM knowledge retrieval via Ollama"
     license: MIT
     test: |
