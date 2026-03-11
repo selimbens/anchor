@@ -51,7 +51,7 @@ jobs:
         echo "::set-output name=hashes::$(cat checksums.sha256 | base64 -w0)"
 
     - name: Upload hashes
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: checksums
         path: dist/checksums.sha256
@@ -73,7 +73,7 @@ jobs:
         go-version: '1.25'
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: checksums
         path: checksums/
