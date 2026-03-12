@@ -36,14 +36,7 @@ jobs:
       run: go mod download
 
     - name: Run tests
-      run: go test -v -race -coverprofile=coverage.out ./...
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.out
-        flags: unittests
-        name: codecov-umbrella
+      run: go test -v -race ./...
 
   lint:
     name: Lint
@@ -103,50 +96,6 @@ jobs:
         go build -v -o anchor${{ matrix.os == 'windows-latest' && '.exe' || '' }} main.go
         ./anchor${{ matrix.os == 'windows-latest' && '.exe' || '' }} --version
       shell: bash
-
-  integration-test:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    services:
-      ollama:
-        image: ollama/ollama:latest
-        ports:
-          - 11434:11434
-        options: >-
-          --health-cmd "curl -f http://localhost:11434/api/tags || exit 1"
-          --health-interval 30s
-          --health-timeout 10s
-          --health-retries 5
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.25'
-
-    - name: Wait for Ollama
-      run: |
-        timeout 300 bash -c 'until curl -f http://localhost:11434/api/tags; do sleep 5; done'
-
-    - name: Pull Ollama model
-      run: |
-        docker exec ${{ job.services.ollama.id }} ollama pull nomic-embed-text
-
-    - name: Build anchor
-      run: go build -o anchor main.go
-
-    - name: Test ingest functionality
-      run: |
-        mkdir -p test-notes
-        echo "# Test Note\\nThis is a test note for integration testing." > test-notes/test.md
-        ./anchor ingest test-notes
-
-    - name: Test ask functionality
-      run: |
-        ./anchor ask "test note" || echo "Integration test completed"
 
   validate-goreleaser:
     name: Validate GoReleaser

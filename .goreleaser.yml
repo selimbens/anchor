@@ -54,34 +54,34 @@ changelog:
       - Merge pull request
       - Merge branch
 
-# Homebrew configuration
-brews:
-  - name: anchor
-    homepage: https://github.com/selimbens/anchor
-    repository:
-      owner: selimbens
-      name: homebrew-anchor
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    directory: Formula
-    description: "AI-powered CLI tool for local LLM knowledge retrieval via Ollama"
-    license: MIT
-    test: |
-      system "#{bin}/anchor", "--version"
-    caveats: |
-      Anchor requires Ollama to be installed and running locally.
-
-      🚀 Quick Start:
-      1. Install Ollama: brew install ollama
-      2. Start Ollama: brew services start ollama
-      3. Pull embedding model: ollama pull nomic-embed-text
-      4. Test Anchor: anchor ingest /path/to/your/notes
-
-      For more information: https://github.com/selimbens/anchor
-    commit_msg_template: |
-      {{.ProjectName}} {{.Version}}
-
-      Built with GoReleaser {{.Version}}
-      Automated update by GoReleaser
+# Homebrew configuration (Disabled temporarily for validation fix)
+# brews:
+#   - name: anchor
+#     homepage: https://github.com/selimbens/anchor
+#     repository:
+#       owner: selimbens
+#       name: homebrew-anchor
+#       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+#     directory: Formula
+#     description: "AI-powered CLI tool for local LLM knowledge retrieval via Ollama"
+#     license: MIT
+#     test: |
+#       system "#{bin}/anchor", "--version"
+#     caveats: |
+#       Anchor requires Ollama to be installed and running locally.
+#
+#       🚀 Quick Start:
+#       1. Install Ollama: brew install ollama
+#       2. Start Ollama: brew services start ollama
+#       3. Pull embedding model: ollama pull nomic-embed-text
+#       4. Test Anchor: anchor ingest /path/to/your/notes
+#
+#       For more information: https://github.com/selimbens/anchor
+#     commit_msg_template: |
+#       {{.ProjectName}} {{.Version}}
+#
+#       Built with GoReleaser {{.Version}}
+#       Automated update by GoReleaser
 
 # GitHub release configuration
 release:
